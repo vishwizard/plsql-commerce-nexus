@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -6,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ShoppingCart, ChevronLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { ProductData } from "@/components/ProductCard";
+import { ProductData } from "@/components/FeaturedProducts";
 import { useUser } from "@/context/UserContext";
 import { toast } from "@/components/ui/use-toast";
 import { Link } from "react-router-dom";
@@ -31,7 +30,7 @@ const ProductDetail = () => {
             *,
             categories!inner(name)
           `)
-          .eq("id", id)
+          .eq("id", parseInt(id))
           .single();
 
         if (error) throw error;
@@ -39,7 +38,8 @@ const ProductDetail = () => {
         setProduct({
           ...data,
           category_name: data.categories.name,
-          rating: 4.5, // Hardcoded for now, could come from reviews average
+          rating: 4.5,
+          description: data.description || "No description available for this product."
         });
       } catch (error) {
         console.error("Error fetching product:", error);

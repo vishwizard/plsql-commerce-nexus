@@ -22,7 +22,7 @@ const Categories = () => {
           const { data: categoryData, error: categoryError } = await supabase
             .from("categories")
             .select("*")
-            .eq("id", id)
+            .eq("id", parseInt(id)) // Fix: Convert string to number
             .single();
 
           if (categoryError) throw categoryError;
@@ -35,7 +35,7 @@ const Categories = () => {
               *,
               categories!inner(name)
             `)
-            .eq("category_id", id);
+            .eq("category_id", parseInt(id)); // Fix: Convert string to number
 
           if (productsError) throw productsError;
           setProducts(productsData.map(p => ({

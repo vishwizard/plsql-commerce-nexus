@@ -15,6 +15,7 @@ export interface ProductData {
   rating?: number;
   is_featured?: boolean;
   stock_quantity: number;
+  description?: string;
 }
 
 const FeaturedProducts = () => {
@@ -56,6 +57,7 @@ const FeaturedProducts = () => {
         if (newestError) throw newestError;
 
         // Fetch sale products (just using some products for demo)
+        // Fix: Use limit and order instead of offset
         const { data: saleProducts, error: saleError } = await supabase
           .from("products")
           .select(`
@@ -63,7 +65,7 @@ const FeaturedProducts = () => {
             categories!inner(name)
           `)
           .limit(4)
-          .offset(4);  // Just to get different products
+          .order('id', { ascending: false });  // Changed from offset to using order
 
         if (saleError) throw saleError;
 
