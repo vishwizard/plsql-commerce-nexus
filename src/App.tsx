@@ -12,7 +12,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Categories from "./pages/Categories";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
-import SocialRedirect from "./pages/socialRedirect";
+import SocialRedirect from "./pages/SocialRedirect";
 
 
 const queryClient = new QueryClient();
