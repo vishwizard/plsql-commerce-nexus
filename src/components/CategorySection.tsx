@@ -2,39 +2,69 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "./ui/card";
 import { Separator } from "./ui/separator";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "./ui/skeleton";
 
-const categories = [
-  {
-    id: 1,
-    name: "Electronics",
-    image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-    count: 432,
-    path: "/category/electronics"
-  },
-  {
-    id: 2,
-    name: "Clothing",
-    image: "https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-    count: 256,
-    path: "/category/clothing"
-  },
-  {
-    id: 3,
-    name: "Home & Kitchen",
-    image: "https://images.unsplash.com/photo-1584346133934-a3a4db4c8b5c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-    count: 189,
-    path: "/category/home"
-  },
-  {
-    id: 4,
-    name: "Sports & Outdoors",
-    image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-    count: 147,
-    path: "/category/sports"
-  }
-];
+interface Category {
+  id: number;
+  name: string;
+  image_url: string;
+  count: number;
+}
 
 const CategorySection = () => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        // Fetch categories
+        const { data: categoriesData, error: categoriesError } = await supabase
+          .from("categories")
+          .select("*");
+
+        if (categoriesError) throw categoriesError;
+
+        // Count products in each category
+        const categoriesWithCounts = await Promise.all(
+          categoriesData.map(async (category) => {
+            const { count, error } = await supabase
+              .from("products")
+              .select("*", { count: "exact", head: true })
+              .eq("category_id", category.id);
+
+            if (error) throw error;
+
+            return {
+              ...category,
+              count: count || 0
+            };
+          })
+        );
+
+        setCategories(categoriesWithCounts);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const renderCategorySkeleton = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {Array(4).fill(0).map((_, i) => (
+        <div key={i} className="rounded-lg overflow-hidden">
+          <Skeleton className="h-[200px] w-full" />
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="py-12 bg-muted/50">
       <div className="container">
@@ -45,27 +75,31 @@ const CategorySection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {categories.map((category) => (
-            <Link key={category.id} to={category.path}>
-              <Card className="overflow-hidden h-full product-card border-0 shadow-md">
-                <div className="aspect-[4/3] relative overflow-hidden">
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="h-full w-full object-cover transition-all hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-dbms-dark/90 to-transparent flex items-end">
-                    <div className="p-6 w-full">
-                      <h3 className="text-xl font-semibold text-white mb-1">{category.name}</h3>
-                      <p className="text-sm text-white/80">{category.count} products</p>
+        {loading ? (
+          renderCategorySkeleton()
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {categories.map((category) => (
+              <Link key={category.id} to={`/category/${category.id}`}>
+                <Card className="overflow-hidden h-full product-card border-0 shadow-md">
+                  <div className="aspect-[4/3] relative overflow-hidden">
+                    <img
+                      src={category.image_url}
+                      alt={category.name}
+                      className="h-full w-full object-cover transition-all hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-dbms-dark/90 to-transparent flex items-end">
+                      <div className="p-6 w-full">
+                        <h3 className="text-xl font-semibold text-white mb-1">{category.name}</h3>
+                        <p className="text-sm text-white/80">{category.count} products</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Card>
-            </Link>
-          ))}
-        </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        )}
 
         <Separator className="my-12" />
 
