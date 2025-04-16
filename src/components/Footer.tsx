@@ -13,21 +13,22 @@ const Footer = () => {
               An e-commerce platform demonstrating PL/SQL database integration for academic projects.
             </p>
             <div className="flex space-x-4">
-              <Link to="#" className="text-gray-300 hover:text-white">
+              <Link to="/facebook" className="text-gray-300 hover:text-white">
                 <Facebook size={20} />
               </Link>
-              <Link to="#" className="text-gray-300 hover:text-white">
+              <Link to="/twitter" className="text-gray-300 hover:text-white">
                 <Twitter size={20} />
               </Link>
-              <Link to="#" className="text-gray-300 hover:text-white">
+              <Link to="/instagram" className="text-gray-300 hover:text-white">
                 <Instagram size={20} />
               </Link>
-              <Link to="#" className="text-gray-300 hover:text-white">
+              <Link to="/github" className="text-gray-300 hover:text-white">
                 <Github size={20} />
               </Link>
-              <Link to="#" className="text-gray-300 hover:text-white">
+              <Link to="/linkedin" className="text-gray-300 hover:text-white">
                 <Linkedin size={20} />
               </Link>
+
             </div>
           </div>
 

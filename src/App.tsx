@@ -12,6 +12,8 @@ import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Categories from "./pages/Categories";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
+import SocialRedirect from "./pages/socialRedirect";
+
 
 const queryClient = new QueryClient();
 
@@ -31,6 +33,7 @@ const App = () => (
             <Route path="/category/:id" element={<Categories />} />
             <Route path="/checkout-success" element={<CheckoutSuccess />} />
             <Route path="*" element={<NotFound />} />
+            <Route path="/:platform" element={<SocialRedirect />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>

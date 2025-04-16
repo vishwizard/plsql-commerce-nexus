@@ -129,7 +129,7 @@ const Cart = () => {
     setCheckoutLoading(true);
     try {
       // For this demo, we'll use a simplified shipping address
-      const shippingAddress = "123 Main St, Anytown, CA 12345";
+      const shippingAddress = "154 Ganga Sadan Khemanand Marg Bheemgoda Haridwar";
       
       const { data, error } = await supabase.rpc('place_order', {
         p_user_id: user.id,
